@@ -46,13 +46,13 @@ export default function Upload() {
     const data = {
       id: uuid,
       resumePath: uploadedFile.path,
-      resumeImage: uploadedImage.path,
+      imagePath: uploadedImage.path,
       companyName,
       jobTitle,
       jobDescription,
       feedback: '',
     };
-    kv.set(`resume: ${uuid}`, JSON.stringify(data));
+    kv.set(`resume:${uuid}`, JSON.stringify(data));
 
     setStatusText('Analyzing...');
 
@@ -61,7 +61,6 @@ export default function Upload() {
       prepareInstructions({
         jobTitle,
         jobDescription,
-        AIResponseFormat: 'JSON',
       })
     );
 
@@ -72,16 +71,19 @@ export default function Upload() {
         ? feedback.message.content
         : feedback.message.content[0].text;
     data.feedback = JSON.parse(feedbackText);
-    kv.set(`resume: ${uuid}`, JSON.stringify(data));
+    kv.set(`resume:${uuid}`, JSON.stringify(data));
 
     setStatusText('Analysis complete, redirecting...');
+    console.log({ data });
+
+    navigate(`/resume/${uuid}`);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget.closest('form');
     if (!form) return;
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(form);
     const companyName = formData.get('company-name') as string;
     const jobTitle = formData.get('job-title') as string;
     const jobDescription = formData.get('job-description') as string;
