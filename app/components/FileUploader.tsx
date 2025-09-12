@@ -4,10 +4,12 @@ import { formatSize } from '~/lib/utils';
 
 interface FileUploaderProps {
   onFileSelect?: (file: File | null) => void;
+  file: File | null;
 }
 
 export default function FileUploader({
   onFileSelect,
+  file,
 }: Readonly<FileUploaderProps>) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -16,14 +18,12 @@ export default function FileUploader({
     },
     [onFileSelect]
   );
-  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     multiple: false,
     accept: { 'application/pdf': ['.pdf'] },
     maxSize: 20 * 1024 * 1024,
   });
-
-  const file = acceptedFiles[0] || null;
 
   return (
     <div className='w-full gradient-border'>

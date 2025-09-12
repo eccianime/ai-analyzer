@@ -74,7 +74,6 @@ export default function Upload() {
     kv.set(`resume:${uuid}`, JSON.stringify(data));
 
     setStatusText('Analysis complete, redirecting...');
-    console.log({ data });
 
     navigate(`/resume/${uuid}`);
   };
@@ -144,7 +143,7 @@ export default function Upload() {
               </div>
               <div className='form-div'>
                 <label htmlFor='uploader'>Upload Resume</label>
-                <FileUploader onFileSelect={handleFileSelect} />
+                <FileUploader onFileSelect={handleFileSelect} file={file} />
               </div>
               <button className='primary-button' type='submit'>
                 Analyze Resume
