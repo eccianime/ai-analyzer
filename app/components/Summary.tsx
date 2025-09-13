@@ -5,12 +5,15 @@ const Category = ({
   title,
   score,
 }: Readonly<{ title: string; score: number }>) => {
-  const textColor =
-    score > 70
-      ? 'text-green-600'
-      : score > 49
-        ? 'text-yellow-600'
-        : 'text-red-600';
+  let textColor = '';
+  if (score > 70) {
+    textColor = 'text-green-600';
+  } else if (score > 49) {
+    textColor = 'text-yellow-600';
+  } else {
+    textColor = 'text-red-600';
+  }
+
   return (
     <div className='resume-summary'>
       <div className='category'>

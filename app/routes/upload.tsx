@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import FileUploader from '~/components/FileUploader';
 import NavBar from '~/components/NavBar';
@@ -11,7 +11,7 @@ export default function Upload() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [statusText, setStatusText] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const { fs, auth, ai, kv, isLoading } = usePuterStore();
+  const { fs, auth, ai, kv } = usePuterStore();
   const navigate = useNavigate();
 
   const handleAnalyze = async ({
@@ -56,26 +56,33 @@ export default function Upload() {
 
     setStatusText('Analyzing...');
 
-    const feedback = await ai.feedback(
-      uploadedFile.path,
-      prepareInstructions({
-        jobTitle,
-        jobDescription,
-      })
-    );
+    try {
+      const feedback = await ai.feedback(
+        uploadedFile.path,
+        prepareInstructions({
+          jobTitle,
+          jobDescription,
+        })
+      );
 
-    if (!feedback) return setStatusText('Error: Failed to analyze resume');
+      if (!feedback) return setStatusText('Error: Failed to analyze resume');
 
-    const feedbackText =
-      typeof feedback.message.content === 'string'
-        ? feedback.message.content
-        : feedback.message.content[0].text;
-    data.feedback = JSON.parse(feedbackText);
-    kv.set(`resume:${uuid}`, JSON.stringify(data));
+      const feedbackText =
+        typeof feedback.message.content === 'string'
+          ? feedback.message.content
+          : feedback.message.content[0].text;
+      data.feedback = JSON.parse(feedbackText);
+      kv.set(`resume:${uuid}`, JSON.stringify(data));
 
-    setStatusText('Analysis complete, redirecting...');
+      setStatusText('Analysis complete, redirecting...');
 
-    navigate(`/resume/${uuid}`);
+      navigate(`/resume/${uuid}`);
+    } catch (error) {
+      console.log(error);
+      setStatusText(
+        'Error: Failed to analyze resume. Your user has exceeded the rate limit. Create a new one and try again.'
+      );
+    }
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -94,6 +101,13 @@ export default function Upload() {
   const handleFileSelect = (file: File | null) => {
     setFile(file);
   };
+
+  useEffect(() => {
+    if (!auth.isAuthenticated) {
+      navigate('/auth?next=/upload');
+    }
+  }, [auth.isAuthenticated]);
+
   return (
     <main className='bg-[url("/images/bg-main.svg")] bg-cover'>
       <NavBar />
@@ -103,7 +117,19 @@ export default function Upload() {
           {isProcessing ? (
             <>
               <h2>{statusText}</h2>
-              <img src='/images/resume-scan.gif' className='w-full' />
+              {statusText.includes('Failed') ? (
+                <img
+                  src='/images/error.png'
+                  alt='resume scan'
+                  className='w-full'
+                />
+              ) : (
+                <img
+                  src='/images/resume-scan.gif'
+                  alt='resume scan'
+                  className='w-full'
+                />
+              )}
             </>
           ) : (
             <h2>Drop your resume for an ATS score and improvement tips</h2>

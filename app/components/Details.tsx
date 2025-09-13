@@ -7,34 +7,32 @@ import {
 } from './Accordion';
 
 const ScoreBadge = ({ score }: { score: number }) => {
+  let bgColor = '';
+  let textColor = '';
+
+  if (score > 70) {
+    bgColor = 'bg-badge-green';
+    textColor = 'text-badge-green-text';
+  } else if (score > 49) {
+    bgColor = 'bg-badge-yellow';
+    textColor = 'text-badge-yellow-text';
+  } else {
+    bgColor = 'bg-badge-red';
+    textColor = 'text-badge-red-text';
+  }
   return (
     <div
       className={cn(
         'flex flex-row gap-1 items-center px-2 py-0.5 rounded-[96px]',
-        score > 69
-          ? 'bg-badge-green'
-          : score > 39
-            ? 'bg-badge-yellow'
-            : 'bg-badge-red'
+        bgColor
       )}
     >
       <img
-        src={score > 69 ? '/icons/check.svg' : '/icons/warning.svg'}
+        src={score > 70 ? '/icons/check.svg' : '/icons/warning.svg'}
         alt='score'
         className='size-4'
       />
-      <p
-        className={cn(
-          'text-sm font-medium',
-          score > 69
-            ? 'text-badge-green-text'
-            : score > 39
-              ? 'text-badge-yellow-text'
-              : 'text-badge-red-text'
-        )}
-      >
-        {score}/100
-      </p>
+      <p className={cn('text-sm font-medium', textColor)}>{score}/100</p>
     </div>
   );
 };
@@ -62,8 +60,8 @@ const CategoryContent = ({
   return (
     <div className='flex flex-col gap-4 items-center w-full'>
       <div className='bg-gray-50 w-full rounded-lg px-5 py-4 grid grid-cols-2 gap-4'>
-        {tips.map((tip, index) => (
-          <div className='flex flex-row gap-2 items-center' key={index}>
+        {tips.map((tip) => (
+          <div className='flex flex-row gap-2 items-center' key={tip.tip}>
             <img
               src={
                 tip.type === 'good' ? '/icons/check.svg' : '/icons/warning.svg'

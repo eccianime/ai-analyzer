@@ -5,28 +5,24 @@ const ATS = ({
   score: number;
   suggestions: { type: 'good' | 'improve'; tip: string }[];
 }) => {
+  let color = '';
+  let icon = '';
+  if (score > 70) {
+    color = 'from-green-100';
+    icon = '/icons/ats-good.svg';
+  } else if (score > 49) {
+    color = 'from-yellow-100';
+    icon = '/icons/ats-warning.svg';
+  } else {
+    color = 'from-red-100';
+    icon = '/icons/ats-bad.svg';
+  }
   return (
     <div
-      className={`rounded-2xl shadow-md w-full bg-gradient-to-b to-light-white p-8 flex flex-col gap-4 ${
-        score > 69
-          ? 'from-green-100'
-          : score > 49
-            ? 'from-yellow-100'
-            : 'from-red-100'
-      }`}
+      className={`rounded-2xl shadow-md w-full bg-gradient-to-b to-light-white p-8 flex flex-col gap-4 ${color}`}
     >
       <div className='flex flex-row gap-4 items-center'>
-        <img
-          src={
-            score > 69
-              ? '/icons/ats-good.svg'
-              : score > 49
-                ? '/icons/ats-warning.svg'
-                : '/icons/ats-bad.svg'
-          }
-          alt='ATS'
-          className='w-10 h-10'
-        />
+        <img src={icon} alt='ATS' className='w-10 h-10' />
         <p className='text-2xl font-semibold'>ATS Score - {score}/100</p>
       </div>
       <div className='flex flex-col gap-2'>
@@ -38,7 +34,10 @@ const ATS = ({
           performed:
         </p>
         {suggestions.map((suggestion, index) => (
-          <div className='flex flex-row gap-2 items-center' key={index}>
+          <div
+            className='flex flex-row gap-2 items-center'
+            key={suggestion.tip + index}
+          >
             <img
               src={
                 suggestion.type === 'good'

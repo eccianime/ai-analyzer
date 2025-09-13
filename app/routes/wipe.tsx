@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { usePuterStore } from '~/lib/puter';
 
 const WipeApp = () => {
-  const { auth, isLoading, error, clearError, fs, ai, kv } = usePuterStore();
+  const { auth, isLoading, error, fs, kv } = usePuterStore();
   const navigate = useNavigate();
   const [files, setFiles] = useState<FSItem[]>([]);
 
@@ -29,6 +29,12 @@ const WipeApp = () => {
     await kv.flush();
     loadFiles();
   };
+
+  useEffect(() => {
+    if (!auth.isAuthenticated) {
+      navigate('/auth?next=/wipe');
+    }
+  }, [auth.isAuthenticated]);
 
   if (isLoading) {
     return <div>Loading...</div>;

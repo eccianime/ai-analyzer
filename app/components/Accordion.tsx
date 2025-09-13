@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { cn } from '~/lib/utils';
 
 interface AccordionContextType {
@@ -51,10 +51,16 @@ export const Accordion: React.FC<AccordionProps> = ({
 
   const isItemActive = (id: string) => activeItems.includes(id);
 
+  const value = useMemo(
+    () => ({
+      activeItems,
+      toggleItem,
+      isItemActive,
+    }),
+    []
+  );
   return (
-    <AccordionContext.Provider
-      value={{ activeItems, toggleItem, isItemActive }}
-    >
+    <AccordionContext.Provider value={value}>
       <div className={`space-y-2 ${className}`}>{children}</div>
     </AccordionContext.Provider>
   );

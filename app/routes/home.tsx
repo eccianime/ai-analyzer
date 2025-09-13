@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import NavBar from '~/components/NavBar';
 import ResumeCard from '~/components/ResumeCard';
 import { usePuterStore } from '~/lib/puter';
-import type { Route } from './+types/home';
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: 'Resumind' },
     { name: 'description', content: 'Smart feedback for your dream jonb!' },
@@ -51,7 +50,7 @@ export default function Home() {
         </div>
         {loadingResumes && (
           <div>
-            <img src='/images/resume-scan-2.gif' className='w-[200px]' />
+            <img src='/images/resume-scan-2.gif' className='w-[200px]' alt='' />
           </div>
         )}
         {!loadingResumes && resumes.length > 0 && (
